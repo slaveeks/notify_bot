@@ -1,7 +1,7 @@
 package telegram
 
 import (
-	"/structs"
+	"../structs"
 	"bytes"
 	"net/http"
 	"fmt"

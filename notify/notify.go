@@ -1,8 +1,8 @@
 package notify
 
 import (
-	"/structs"
-	"./telegram"
+	"../structs"
+	"../telegram"
 	"strings"
 	"net/http"
 	"fmt"
