@@ -1,7 +1,7 @@
 package telegram
 
 import (
-	"../structs"
+	"/structs"
 	"bytes"
 	"net/http"
 	"fmt"
@@ -11,8 +11,8 @@ var TelegramUrl = "https://api.telegram.org/bot"
 var Token string
 var Url string
 
-func SendMessage(chatID int64, text string, parse_mode string){
-	reqMessage := structs.СodeMessageToJSON(chatID, text, parse_mode)
+func SendMessage(chatID int64, text string, parse_mode string, disable_web_page_preview string){
+	reqMessage := structs.СodeMessageToJSON(chatID, text, parse_mode, disable_web_page_preview)
 	_, err := http.Post(fmt.Sprintf("%s%s/sendMessage", TelegramUrl, Token), "application/json", bytes.NewBuffer(reqMessage))
 	if err != nil {
 	}

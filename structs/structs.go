@@ -17,6 +17,7 @@ type messageToTelegram struct {
 	ChatID int64  `json:"chat_id"`
 	Text   string `json:"text"`
 	ParseMode string `json:"parse_mode"`
+	Disable_web_page_preview string `json:"disable_web_page_preview"`
 }
 
 type dataForWebhook struct{
@@ -30,8 +31,8 @@ func DecodeMessageFromJSON(data io.Reader) *messageFromTelegram{
 	return message
 }
 
-func СodeMessageToJSON(chatID int64, text string, Parse_mode string) []byte{
-	message := &messageToTelegram{ ChatID: chatID, Text: text, ParseMode: Parse_mode, }
+func СodeMessageToJSON(chatID int64, text string, Parse_mode string, disable_web_page_preview string) []byte{
+	message := &messageToTelegram{ ChatID: chatID, Text: text, ParseMode: Parse_mode, Disable_web_page_preview: disable_web_page_preview, }
 	messageBytes, err := json.Marshal(message)
 	if err != nil {
 	}
