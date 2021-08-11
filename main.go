@@ -1,12 +1,11 @@
 package main
 
 import (
-	"notify_bot/server"
-	"os"
-	"log"
 	"flag"
 	"fmt"
+	"log"
 	"notify_bot/telegram"
+	"os"
 )
 
 func main() {
@@ -26,5 +25,5 @@ func main() {
 	telegram.Token = token
 	telegram.Url = url
 	telegram.SetWebhook()
-	server.StartServer(port)
+	StartServer(port)
 }
