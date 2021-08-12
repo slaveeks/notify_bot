@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"notify_bot/telegram"
-	"strings"
+	"net/url"
 )
 
 var chatID int64
@@ -24,11 +24,10 @@ func handler(res http.ResponseWriter, req *http.Request) {
 }
 
 func makeHandle() string{
-	urlArray := strings.Split(telegram.Url, "/")
-	handle := "/"
-	for i:=3 ; i<len(urlArray); i++{
-		handle += urlArray[i] + "/"
+	u, err := url.Parse(telegram.Url)
+	if err != nil{
 	}
+	handle := u.EscapedPath()
 	return handle
 }
 
