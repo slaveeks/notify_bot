@@ -3,7 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
+	"notify_bot/db"
+	"notify_bot/logger"
 	"notify_bot/telegram"
 	"os"
 )
@@ -17,13 +18,14 @@ func main() {
 	}
 	err := mySet.Parse(os.Args)
 	if err != nil {
-		log.Fatalf("Invalid number of arguments")
+		logger.Fatal("Invalid number of arguments")
 	}
 	url := os.Args[2]
 	port := os.Args[3]
 	token := os.Args[4]
 	telegram.Token = token
 	telegram.Url = url
+	db.InitDB()
 	telegram.SetWebhook()
 	StartServer(port)
 }

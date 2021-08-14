@@ -3,7 +3,8 @@ package telegram
 import (
 	"encoding/json"
 	"io"
-	)
+	"notify_bot/logger"
+)
 type messageFromTelegram struct {
 	Message struct {
 		Text string `json:"text"`
@@ -16,8 +17,8 @@ type messageFromTelegram struct {
 type messageToTelegram struct {
 	ChatID int64  `json:"chat_id"`
 	Text   string `json:"text"`
-	ParseMode string `json:"parse_mode"`
-	Disable_web_page_preview string `json:"disable_web_page_preview"`
+	ParseMode             string `json:"parse_mode"`
+	DisableWebPagePreview string `json:"disable_web_page_preview"`
 }
 
 type dataForWebhook struct{
@@ -27,14 +28,16 @@ type dataForWebhook struct{
 func DecodeMessageFromJSON(data io.Reader) *messageFromTelegram{
 	message := &messageFromTelegram{}
 	if err := json.NewDecoder(data).Decode(message); err != nil {
+		logger.Warn("Error while decoding message")
 	}
 	return message
 }
 
-func СodeMessageToJSON(chatID int64, text string, Parse_mode string, disable_web_page_preview string) []byte{
-	message := &messageToTelegram{ ChatID: chatID, Text: text, ParseMode: Parse_mode, Disable_web_page_preview: disable_web_page_preview, }
+func СodeMessageToJSON(chatID int64, text string, ParseMode string, disableWebPagePreview string) []byte{
+	message := &messageToTelegram{ ChatID: chatID, Text: text, ParseMode: ParseMode, DisableWebPagePreview: disableWebPagePreview, }
 	messageBytes, err := json.Marshal(message)
 	if err != nil {
+		logger.Warn("Error while coding message")
 	}
 	return messageBytes
 }
@@ -45,6 +48,7 @@ func MakeDataForWebhook(url string) []byte{
 	}
 	dataBytes, err := json.Marshal(data)
 	if err != nil {
+		logger.Warn("Error while coding message")
 	}
 	return dataBytes
 }

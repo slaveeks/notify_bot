@@ -2,37 +2,50 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-	"notify_bot/telegram"
+	"github.com/labstack/echo/v4"
 	"net/url"
+	"notify_bot/db"
+	"notify_bot/logger"
+	"notify_bot/telegram"
 )
 
-var chatID int64
+func WebhookHandler(c echo.Context) error{
+	token := c.Param("token")
+	if db.IsTokenInDB(token) {
+		text := c.FormValue("message")
+		parseMode := c.FormValue("parse_mode")
+		disableWebPagePreview := c.FormValue("disable_web_page_preview")
+		chatID := db.GetChatID(token)
+		if len(text) != 0 {
+			telegram.SendMessage(chatID, text, parseMode, disableWebPagePreview)
+		}
+	}else{
+		logger.Info("Invalid Token")
+	}
+	return nil
+}
 
-func handler(res http.ResponseWriter, req *http.Request) {
-    req.ParseForm()
-    text := req.FormValue("message")
-    parse_mode := req.FormValue("parse_mode")
-    disable_web_page_preview := req.FormValue("disable_web_page_preview")
-    if len(text) != 0{
-    	telegram.SendMessage(chatID, text, parse_mode, disable_web_page_preview)
-    } else {
-    	dataFromChat := telegram.DecodeMessageFromJSON(req.Body)
-    	chatID = dataFromChat.Message.Chat.ID
-    	fmt.Println(dataFromChat.Message.Text)
-    }
+func telegramCallbacks(c echo.Context) error {
+	dataFromChat := telegram.DecodeMessageFromJSON(c.Request().Body)
+	telegram.ParseCommands(dataFromChat)
+	return nil
 }
 
 func makeHandle() string{
 	u, err := url.Parse(telegram.Url)
 	if err != nil{
+		logger.Fatal("Url was not parsed")
 	}
 	handle := u.EscapedPath()
+	logger.Info(fmt.Sprintf("Route is set to %s", handle))
 	return handle
 }
 
 func StartServer(port string){
 	handle := makeHandle()
-	http.HandleFunc(handle, handler)
-	http.ListenAndServe("localhost:"+port, nil)
+	e := echo.New()
+	e.POST(handle, telegramCallbacks)
+	e.POST(handle+"/:token", WebhookHandler)
+	e.Logger.Fatal(e.Start(":"+port))
+	logger.Info(fmt.Sprintf("Sever was started on %s", port))
 }
