@@ -3,13 +3,31 @@ package telegram
 import (
 	"fmt"
 	"notify_bot/db"
+	"strings"
 )
 
 func ParseCommands(data *messageFromTelegram) {
-	switch data.Message.Text{
+	var command string
+	pos := 	strings.Index(data.Message.Text, "@")
+	if pos == -1{
+		command = data.Message.Text
+	} else {
+		if data.Message.Text[pos+1:] == BotName {
+			command = data.Message.Text[:pos]
+		}
+	}
+	switch command{
 		case "/start": start(data.Message.Chat.ID)
 	case "/help": help()
 	case "/notify": notify(data.Message.Chat.ID)
+	}
+}
+
+func IsCommand(data *messageFromTelegram) bool{
+	if (data.Message.Entities[0]).Type == "bot_command"{
+		return true
+	}else {
+		return false
 	}
 }
 

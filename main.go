@@ -10,22 +10,27 @@ import (
 )
 
 func main() {
-	mySet := flag.NewFlagSet("start_bot",flag.ExitOnError)
-
+	var url string
+	var mongoUrl string
+	var addr string
+	var token string
+	mySet := flag.NewFlagSet("",flag.ExitOnError)
+	mySet.StringVar(&url, "url", "", "Url for webhooks")
+	mySet.StringVar(&mongoUrl, "mongo", "mongodb://127.0.0.1:27017", "Url for Database")
+	mySet.StringVar(&addr, "addr", "localhost:1330", "Server's address")
+	mySet.StringVar(&token, "token", "", "Telegram bot token")
 	if len(os.Args) < 5 {
-		fmt.Fprintf(os.Stderr, "Usage: <command> <arguments>\nCommand: start_bot\nArguments:\n Url prefix, Listen Port, telegram token")
+		fmt.Fprintf(os.Stderr, "Usage: %s\n\nArguments:\n ", os.Args[0])
+		mySet.PrintDefaults()
 		os.Exit(0)
 	}
-	err := mySet.Parse(os.Args)
+	err := mySet.Parse(os.Args[1:])
 	if err != nil {
 		logger.Fatal("Invalid number of arguments")
 	}
-	url := os.Args[2]
-	port := os.Args[3]
-	token := os.Args[4]
 	telegram.Token = token
 	telegram.Url = url
-	db.InitDB()
+	db.InitDB(mongoUrl)
 	telegram.SetWebhook()
-	StartServer(port)
+	StartServer(addr)
 }

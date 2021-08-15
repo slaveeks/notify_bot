@@ -3,10 +3,27 @@ package telegram
 import (
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"notify_bot/logger"
 )
+
+type User struct{
+	Result struct {
+		ID        int    `json:"id"`
+		FirstName string `json:"first_name"`
+		UserName  string `json:"username"`
+	} `json:"result"`
+}
+
+type MessageEntity struct {
+	Type string `json:"type"`
+	Offset int `json:"offset"`
+	Length int `json:"length"`
+}
+
 type messageFromTelegram struct {
 	Message struct {
+		Entities []MessageEntity `json:"entities"`
 		Text string `json:"text"`
 		Chat struct {
 			ID int64 `json:"id"`
@@ -51,4 +68,17 @@ func MakeDataForWebhook(url string) []byte{
 		logger.Warn("Error while coding message")
 	}
 	return dataBytes
+}
+
+func ConvertToUser(data io.Reader) *User {
+	var Bot *User
+	body, err := ioutil.ReadAll(data)
+	if err != nil {
+		logger.Warn("")
+	}
+	err = json.Unmarshal(body, &Bot)
+	if err != nil {
+		logger.Warn("")
+	}
+	return Bot
 }

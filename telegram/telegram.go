@@ -12,7 +12,8 @@ import (
 var TelegramUrl = "https://api.telegram.org/bot"
 var Token string
 var Url string
-var letterRunes = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var letterRunes = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+var BotName string
 
 func SendMessage(chatID int64, text string, parseMode string, disableWebPagePreview string){
 	if parseMode == ""{
@@ -36,6 +37,16 @@ func SetWebhook(){
 		logger.Fatal("Webhook does not be set")
 	}
 	logger.Info(fmt.Sprintf("Webhook was set to ", Url))
+	BotName = GetBotName()
+}
+
+func GetBotName() string{
+	resp, err := http.Get(fmt.Sprintf("%s%s/getMe", TelegramUrl, Token))
+	if err != nil {
+		logger.Fatal("")
+	}
+	bot := ConvertToUser(resp.Body)
+	return bot.Result.UserName
 }
 
 func GenerateNewToken() string {
@@ -46,3 +57,5 @@ func GenerateNewToken() string {
 	}
 	return string(token)
 }
+
+

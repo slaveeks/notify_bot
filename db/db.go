@@ -16,8 +16,8 @@ type DataFromDb struct {
 	ChatID int64
 }
 
-func InitDB(){
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://127.0.0.1:27017"))
+func InitDB(url string){
+	client, err := mongo.NewClient(options.Client().ApplyURI(url))
 	if err != nil {
 		logger.Fatal("")
 	}
