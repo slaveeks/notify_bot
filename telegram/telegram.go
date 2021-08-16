@@ -25,7 +25,7 @@ func SendMessage(chatID int64, text string, parseMode string, disableWebPagePrev
 	reqMessage := СodeMessageToJSON(chatID, text, parseMode, disableWebPagePreview)
 	_, err := http.Post(fmt.Sprintf("%s%s/sendMessage", TelegramUrl, Token), "application/json", bytes.NewBuffer(reqMessage))
 	if err != nil {
-		logger.Warn("Error while sending message")
+		logger.Warn(fmt.Sprint("Error while sending message", err))
 	}
 	logger.Info("Message is send to chat")
 }
@@ -34,7 +34,7 @@ func SetWebhook(){
 	reqData := MakeDataForWebhook(Url)
 	_, err := http.Post(fmt.Sprintf("%s%s/setWebhook", TelegramUrl, Token), "application/json", bytes.NewBuffer(reqData))
 	if err != nil {
-		logger.Fatal("Webhook does not be set")
+		logger.Fatal(fmt.Sprint("Webhook does not be set\n", err))
 	}
 	logger.Info(fmt.Sprintf("Webhook was set to ", Url))
 	BotName = GetBotName()
@@ -43,9 +43,10 @@ func SetWebhook(){
 func GetBotName() string{
 	resp, err := http.Get(fmt.Sprintf("%s%s/getMe", TelegramUrl, Token))
 	if err != nil {
-		logger.Fatal("")
+		logger.Fatal(fmt.Sprint("Error while getting information about bot\n", err))
 	}
 	bot := ConvertToUser(resp.Body)
+	logger.Info(fmt.Sprint(bot))
 	return bot.Result.UserName
 }
 

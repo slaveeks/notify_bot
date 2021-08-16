@@ -27,6 +27,7 @@ func WebhookHandler(c echo.Context) error{
 
 func telegramCallbacks(c echo.Context) error {
 	dataFromChat := telegram.DecodeMessageFromJSON(c.Request().Body)
+	logger.Info(fmt.Sprint(dataFromChat))
 	if telegram.IsCommand(dataFromChat) {
 		telegram.ParseCommands(dataFromChat)
 	}
@@ -36,10 +37,10 @@ func telegramCallbacks(c echo.Context) error {
 func makeHandle() string{
 	u, err := url.Parse(telegram.Url)
 	if err != nil{
-		logger.Fatal("Url was not parsed")
+		logger.Fatal(fmt.Sprint("Url was not parsed\n", err))
 	}
 	handle := u.EscapedPath()
-	logger.Info(fmt.Sprintf("Route is set to %s", handle))
+	logger.Info(fmt.Sprintf("Route is set to /%s", handle))
 	return handle
 }
 
@@ -49,5 +50,4 @@ func StartServer(addr string){
 	e.POST(handle, telegramCallbacks)
 	e.POST(handle+"/:token", WebhookHandler)
 	e.Logger.Fatal(e.Start(addr))
-	logger.Info(fmt.Sprintf("Sever was started on %s", addr))
 }

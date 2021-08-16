@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"notify_bot/logger"
@@ -54,7 +55,7 @@ func СodeMessageToJSON(chatID int64, text string, ParseMode string, disableWebP
 	message := &messageToTelegram{ ChatID: chatID, Text: text, ParseMode: ParseMode, DisableWebPagePreview: disableWebPagePreview, }
 	messageBytes, err := json.Marshal(message)
 	if err != nil {
-		logger.Warn("Error while coding message")
+		logger.Warn(fmt.Sprint("Error while coding message\n", err))
 	}
 	return messageBytes
 }
@@ -65,7 +66,7 @@ func MakeDataForWebhook(url string) []byte{
 	}
 	dataBytes, err := json.Marshal(data)
 	if err != nil {
-		logger.Warn("Error while coding message")
+		logger.Warn(fmt.Sprint("Error while coding message\n", err))
 	}
 	return dataBytes
 }
@@ -74,11 +75,11 @@ func ConvertToUser(data io.Reader) *User {
 	var Bot *User
 	body, err := ioutil.ReadAll(data)
 	if err != nil {
-		logger.Warn("")
+		logger.Warn(fmt.Sprint(err))
 	}
 	err = json.Unmarshal(body, &Bot)
 	if err != nil {
-		logger.Warn("")
+		logger.Warn(fmt.Sprint(err))
 	}
 	return Bot
 }
