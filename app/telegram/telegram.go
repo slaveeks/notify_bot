@@ -30,8 +30,8 @@ func SendMessage(chatID int64, text string, parseMode string, disableWebPagePrev
 	logger.Info("Message is send to chat")
 }
 
-func SetWebhook(){
-	reqData := MakeDataForWebhook(Url)
+func SetWebhook(cert string){
+	reqData := MakeDataForWebhook(Url, cert)
 	_, err := http.Post(fmt.Sprintf("%s%s/setWebhook", TelegramUrl, Token), "application/json", bytes.NewBuffer(reqData))
 	if err != nil {
 		logger.Fatal(fmt.Sprint("Webhook does not be set\n", err))
@@ -39,6 +39,7 @@ func SetWebhook(){
 	logger.Info(fmt.Sprintf("Webhook was set to ", Url))
 	BotName = GetBotName()
 }
+
 
 func GetBotName() string{
 	resp, err := http.Get(fmt.Sprintf("%s%s/getMe", TelegramUrl, Token))

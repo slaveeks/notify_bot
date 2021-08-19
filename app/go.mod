@@ -3,7 +3,6 @@ module notify_bot
 go 1.13
 
 require (
-	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/labstack/echo/v4 v4.5.0
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/sirupsen/logrus v1.8.1

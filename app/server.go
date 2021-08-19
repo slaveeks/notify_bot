@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
+	logger "github.com/sirupsen/logrus"
+	"net/http"
 	"net/url"
 	"notify_bot/db"
 	"notify_bot/telegram"
-	logger "github.com/sirupsen/logrus"
 )
 
 func WebhookHandler(c echo.Context) error{
@@ -52,4 +53,14 @@ func StartServer(addr string){
 	e.POST(handle, telegramCallbacks)
 	e.POST(handle+"/:token", WebhookHandler)
 	e.Logger.Fatal(e.Start(addr))
+}
+
+func StartServerWithTLS(addr string, key string, cert string){
+	handle := makeHandle()
+	e := echo.New()
+	e.POST(handle, telegramCallbacks)
+	e.POST(handle+"/:token", WebhookHandler)
+	if err := e.StartTLS(":8443", cert, key); err != http.ErrServerClosed {
+		logger.Fatal(err)
+	}
 }

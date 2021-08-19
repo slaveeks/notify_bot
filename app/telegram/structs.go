@@ -41,6 +41,7 @@ type messageToTelegram struct {
 
 type dataForWebhook struct{
 	Url string `json:"url"`
+	cert string `json:"certificate"`
 }
 
 func DecodeMessageFromJSON(data io.Reader) *messageFromTelegram{
@@ -60,9 +61,17 @@ func СodeMessageToJSON(chatID int64, text string, ParseMode string, disableWebP
 	return messageBytes
 }
 
-func MakeDataForWebhook(url string) []byte{
-	data := &dataForWebhook{
-		Url: url,
+func MakeDataForWebhook(url string, cert string) []byte{
+	data := &dataForWebhook{}
+	if len(cert) != 0 {
+		data = &dataForWebhook{
+			Url:  url,
+			cert: "@" + cert,
+		}
+	}else {
+		data = &dataForWebhook{
+			Url: url,
+		}
 	}
 	dataBytes, err := json.Marshal(data)
 	if err != nil {
@@ -83,3 +92,5 @@ func ConvertToUser(data io.Reader) *User {
 	}
 	return Bot
 }
+
+
