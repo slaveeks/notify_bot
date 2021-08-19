@@ -8,7 +8,7 @@ import (
 
 func ParseCommands(data *messageFromTelegram) {
 	var command string
-	pos := 	strings.Index(data.Message.Text, "@")
+	pos := strings.Index(data.Message.Text, "@")
 	if pos == -1{
 		command = data.Message.Text
 	} else {
@@ -24,6 +24,9 @@ func ParseCommands(data *messageFromTelegram) {
 }
 
 func IsCommand(data *messageFromTelegram) bool{
+	if data.Message.Entities == nil || len(data.Message.Entities) == 0 {
+		return false
+	}
 	if (data.Message.Entities[0]).Type == "bot_command"{
 		return true
 	}else {
@@ -54,6 +57,7 @@ func notify(ChatID int64){
 			"\n\nMake a POST request with text in «message» param.", Url, token)
 		SendMessage(ChatID, message, "HTML", "")
 	}else {
-		SendMessage(ChatID, "Print /start", "HTML", "")
+		token := GenerateNewToken()
+		db.AddNewChat(ChatID, token)
 	}
 }

@@ -5,8 +5,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/url"
 	"notify_bot/db"
-	"notify_bot/logger"
 	"notify_bot/telegram"
+	logger "github.com/sirupsen/logrus"
 )
 
 func WebhookHandler(c echo.Context) error{
@@ -26,7 +26,9 @@ func WebhookHandler(c echo.Context) error{
 }
 
 func telegramCallbacks(c echo.Context) error {
-	dataFromChat := telegram.DecodeMessageFromJSON(c.Request().Body)
+	data := c.Request().Body
+	logger.Infof("%s", data)
+	dataFromChat := telegram.DecodeMessageFromJSON(data)
 	logger.Info(fmt.Sprint(dataFromChat))
 	if telegram.IsCommand(dataFromChat) {
 		telegram.ParseCommands(dataFromChat)
