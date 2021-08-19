@@ -1,0 +1,14 @@
+version: "3.3"
+services:
+  notify:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+      - ./app:/app
+  mongodb:
+    image: mongo
+    volumes:
+      - ~/mongodb:/data/db
+    ports:
+      - "127.0.0.1:27017:27017"
